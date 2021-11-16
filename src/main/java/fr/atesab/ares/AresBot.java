@@ -1,24 +1,18 @@
 package fr.atesab.ares;
 
-import java.util.stream.Collectors;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.reactivestreams.Publisher;
 
 import discord4j.common.util.Snowflake;
 import discord4j.core.DiscordClient;
-import discord4j.core.GatewayDiscordClient;
-import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.channel.GuildMessageChannel;
 import fr.atesab.ares.data.BotReading;
 import fr.atesab.ares.data.ChannelReading;
-import fr.atesab.ares.data.MessageReading;
 import fr.atesab.ares.data.ServerReading;
 import lombok.Getter;
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
 
 public class AresBot {
     private static final String CONFIG_FILE = "ares.json";
@@ -65,22 +59,24 @@ public class AresBot {
     public void startClient() {
         var gateway = client.login().block();
         var reading = new BotReading();
-        for (var serverId : config.getServerIds()) {
+        Flux.fromIterable(config.getServerIds()).subscribe(serverId -> {
             gateway.getGuildById(Snowflake.of(serverId)).subscribe(server -> {
                 var serverReading = new ServerReading(server.getName());
                 reading.addServer(serverReading);
-                server.getChannels().filter(c -> c instanceof GuildMessageChannel).map(c -> (GuildMessageChannel) c)
-                        .subscribe(channel -> {
-                            var channelReading = new ChannelReading(channel.getName());
-                            serverReading.addChannel(channelReading);
-                            channel.getMessagesBefore(channel.getLastMessage().block().getChannelId())
-                                    .subscribe(msg -> {
-                                        var messageReading = new MessageReading(msg.getChannelId());
-                                        messageReading.readReaction(msg.getReactions());
-                                        channelReading.addMessage(messageReading);
-                                    });
-                        });
+                server.getChannels().ofType(GuildMessageChannel.class).subscribe(channel -> {
+                    var channelReading = new ChannelReading(channel.getName());
+                    serverReading.addChannel(channelReading);
+                    channel.getLastMessage().subscribe(msg -> {
+                        // var messages = channel.getMessagesBefore(msg.getChannelId());
+                        // messages.subscribe(msg -> {
+                        // var messageReading = new MessageReading(msg.getChannelId());
+                        // messageReading.readReaction(msg.getReactions());
+                        // channelReading.addMessage(messageReading);
+                        // });
+                    });
+                });
             });
-        }
+        });
+
     }
 }

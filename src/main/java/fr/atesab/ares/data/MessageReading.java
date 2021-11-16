@@ -15,7 +15,7 @@ public class MessageReading {
     private Snowflake author;
     private List<String> reactions = new ArrayList<>();
 
-    public void readReaction(List<Reaction> reactions) {
+    public synchronized void readReaction(List<Reaction> reactions) {
         reactions.stream().map(r -> r.getEmoji()).filter(r -> r instanceof Unicode).map(r -> ((Unicode) r).getRaw())
                 .forEach(this.reactions::add);
     }

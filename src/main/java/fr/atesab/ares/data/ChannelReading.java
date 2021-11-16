@@ -12,7 +12,7 @@ public class ChannelReading {
     private String name;
     private List<MessageReading> servers = new ArrayList<>();
 
-    public void addMessage(MessageReading messageReading) {
+    public synchronized void addMessage(MessageReading messageReading) {
         servers.add(messageReading);
     }
 }

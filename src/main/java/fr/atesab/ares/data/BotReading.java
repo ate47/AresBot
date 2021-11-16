@@ -9,7 +9,7 @@ import lombok.Data;
 public class BotReading {
     private List<ServerReading> servers = new ArrayList<>();
 
-    public void addServer(ServerReading reading) {
+    public synchronized void addServer(ServerReading reading) {
         servers.add(reading);
     }
 }
