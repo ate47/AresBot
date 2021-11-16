@@ -5,7 +5,6 @@ plugins {
 
 repositories {
     mavenCentral()
-    maven { url "https://libraries.minecraft.net" }
 }
 
 dependencies {
@@ -22,6 +21,4 @@ dependencies {
 	
 	testCompileOnly 'org.projectlombok:lombok:1.18.22'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
-
-  	implementation 'com.mojang:brigadier:1.0.17'
 }
