@@ -1,0 +1,27 @@
+
+plugins {
+    id 'java-library'
+}
+
+repositories {
+    mavenCentral()
+    maven { url "https://libraries.minecraft.net" }
+}
+
+dependencies {
+    // https://discord4j.com/
+    implementation "com.discord4j:discord4j-core:3.2.1"
+    // https://mvnrepository.com/artifact/commons-cli/commons-cli
+    implementation "commons-cli:commons-cli:1.5.0"
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
+    implementation "com.fasterxml.jackson.core:jackson-core:2.13.0"
+
+    // https://projectlombok.org/
+	compileOnly 'org.projectlombok:lombok:1.18.22'
+	annotationProcessor 'org.projectlombok:lombok:1.18.22'
+	
+	testCompileOnly 'org.projectlombok:lombok:1.18.22'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
+
+  	implementation 'com.mojang:brigadier:1.0.17'
+}
